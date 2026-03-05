@@ -1,1 +1,27 @@
-sudo iptables -I FORWARD -p icmp -j DROP
+Firewall Rules
+1️⃣ Allow outside hosts to access telnet only on 192.168.60.5
+sudo iptables -A FORWARD -i br-288a365a777c -o br-c39f0aea5210 -p tcp -d 192.168.60.5 --dport 23 -j ACCEPT
+2️⃣ Block outside hosts from accessing telnet on other internal hosts
+sudo iptables -A FORWARD -i br-288a365a777c -o br-c39f0aea5210 -p tcp --dport 23 -j DROP
+3️⃣ Allow internal hosts to access all internal servers
+sudo iptables -A FORWARD -i br-c39f0aea5210 -o br-c39f0aea5210 -j ACCEPT
+4️⃣ Block internal hosts from accessing external servers
+sudo iptables -A FORWARD -i br-c39f0aea5210 -o br-288a365a777c -j DROP
+5️⃣ Allow return traffic
+sudo iptables -A FORWARD -p tcp --sport 23 -j ACCEPT
+6️⃣ Default policy
+sudo iptables -P FORWARD DROP
+What these rules enforce
+Traffic	Result
+Outside → 192.168.60.5 telnet	✅ Allowed
+Outside → other internal telnet servers	❌ Blocked
+Internal → internal servers	✅ Allowed
+Internal → external servers	❌ Blocked
+Reset firewall (as required by lab)
+
+After finishing the exercise:
+
+sudo iptables -F
+sudo iptables -P OUTPUT ACCEPT
+sudo iptables -P INPUT ACCEPT
+sudo iptables -P FORWARD ACCEPT
