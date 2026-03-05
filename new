@@ -1,1 +1,42 @@
-sudo docker run --rm --privileged tonistiigi/binfmt --install all
+Step 3 — Allow internal network → anywhere
+sudo iptables -A FORWARD -i br-c39f0aea5210 -o br-288a365a777c -j ACCEPT
+
+This allows:
+
+192.168.60.0 → 10.9.0.0
+Step 4 — Allow return traffic (stateful rule)
+sudo iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+This allows replies.
+
+Step 5 — Test the firewall
+
+Enter HostA container:
+
+sudo docker exec -it hostA-10.9.0.5 bash
+
+Try pinging internal hosts:
+
+ping 192.168.60.5
+
+It should FAIL (blocked).
+
+Step 6 — Test internal → external
+
+Enter Host1:
+
+sudo docker exec -it host1-192.168.60.5 bash
+
+Then:
+
+ping 10.9.0.5
+
+This should WORK.
+
+Step 7 — Show firewall rules (for lab screenshot)
+
+Run:
+
+sudo iptables -L -v
+
+Take screenshot for your lab report.
