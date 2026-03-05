@@ -1,5 +1,3 @@
-sudo iptables -A INPUT -p icmp --icmp-type echo-request -j ACCEPT
-sudo iptables -A OUTPUT -p icmp --icmp-type echo-reply -j ACCEPT
-
-sudo iptables -P OUTPUT DROP
-sudo iptables -P INPUT DROP
+sudo iptables -F
+sudo iptables -P OUTPUT ACCEPT
+sudo iptables -P INPUT ACCEPT
