@@ -1,12 +1,7 @@
-Step 3 — Configure firewall rules
+sudo iptables -A FORWARD -i br-288a365a777c -o br-c39f0aea5210 -p icmp --icmp-type echo-request -j DROP
 
-Exit router container and run these on the host terminal:
+sudo iptables -A FORWARD -i br-c39f0aea5210 -o br-288a365a777c -p icmp --icmp-type echo-request -j ACCEPT
 
-sudo iptables -F
-
-Add rules:
-
-sudo iptables -A FORWARD -i br-288a365a777c -p icmp --icmp-type echo-request -j DROP
-sudo iptables -A FORWARD -i br-c39f0aea5210 -p icmp --icmp-type echo-request -j ACCEPT
 sudo iptables -A FORWARD -p icmp --icmp-type echo-reply -j ACCEPT
+
 sudo iptables -P FORWARD DROP
