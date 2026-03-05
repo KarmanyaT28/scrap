@@ -1,7 +1,1 @@
-sudo iptables -A FORWARD -i br-288a365a777c -o br-c39f0aea5210 -p icmp --icmp-type echo-request -j DROP
-
-sudo iptables -A FORWARD -i br-c39f0aea5210 -o br-288a365a777c -p icmp --icmp-type echo-request -j ACCEPT
-
-sudo iptables -A FORWARD -p icmp --icmp-type echo-reply -j ACCEPT
-
-sudo iptables -P FORWARD DROP
+sudo iptables -I FORWARD -p icmp -j DROP
