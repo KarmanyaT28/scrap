@@ -1,1 +1,1 @@
-sudo systemctl reset-failed NetworkManager && sudo sed -i 's/renderer: networkd/renderer: NetworkManager/' /etc/netplan/00-default-nm-renderer.yaml && sudo systemctl disable --now systemd-networkd && sudo systemctl enable --now NetworkManager && sudo netplan apply
+sudo nmcli connection add type ethernet ifname enp0s1 con-name lab-static ipv4.method manual ipv4.addresses 192.168.65.50/24 ipv4.gateway 192.168.65.1 ipv4.dns 8.8.8.8
