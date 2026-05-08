@@ -1,1 +1,3 @@
-docker run --rm -it --platform linux/amd64 seed-local-dns-server bash
+grep -A 18 "local-server" docker-compose.yml
+grep -A 14 "attacker-ns" docker-compose.yml
+docker logs local-dns-server-10.9.0.53
