@@ -1,1 +1,1 @@
-sed -i 's/named -g -c/\/usr\/sbin\/named -g -c/g' docker-compose.yml
+docker run --rm -it --platform linux/amd64 seed-local-dns-server bash
