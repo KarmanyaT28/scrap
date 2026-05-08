@@ -1,60 +1,92 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lab Script Download</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 20px;
-      line-height: 1.6;
-    }
-    .card {
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    code {
-      background: #f4f4f4;
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
-    a.button {
-      display: inline-block;
-      margin-top: 15px;
-      padding: 10px 16px;
-      background: #0b57d0;
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-    }
-    a.button:hover {
-      background: #0842a0;
-    }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <h1>Training Lab Script</h1>
-    <p>
-      Download the harmless demo script below for shell scripting practice.
-    </p>
+seed@hack-home:~/Downloads/Labsetup$ cat docker-compose.yml 
+version: "3"
 
-    <a class="button" href="demo_fetch.sh" download>Download demo_fetch.sh</a>
+services:
+    Router:
+        image: handsonsecurity/seed-ubuntu:large
+        container_name: seed-router
+        tty: true
+        cap_add:
+                - ALL
+        sysctls:
+                - net.ipv4.ip_forward=1
+        networks:
+            net-10.9.0.0:
+                ipv4_address: 10.9.0.11
+            net-10.8.0.0:
+                ipv4_address: 10.8.0.11
+        command: bash -c "
+                      ip route del default  &&
+                      ip route add default via 10.8.0.1 &&
+                      iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE &&
+                      tail -f /dev/null
+                 "
 
-    <h2>How to run</h2>
-    <p>After downloading, open a terminal and run:</p>
-    <pre><code>chmod +x demo_fetch.sh
-./demo_fetch.sh</code></pre>
+    local-server:
+        build: ./image_local_dns_server
+        image: seed-local-dns-server
+        container_name: local-dns-server-10.9.0.53
+        tty: true
+        cap_add:
+                - ALL
+        networks:
+            net-10.9.0.0:
+                ipv4_address: 10.9.0.53
+        command: bash -c "
+                      ip route del default  &&
+                      ip route add default via 10.9.0.11 &&
+                      service named start && tail -f /dev/null
+                "
+                  
+    user:
+        build: ./image_user
+        image: seed-user
+        container_name: user-10.9.0.5
+        tty: true
+        cap_add:
+                - ALL
+        networks:
+            net-10.9.0.0:
+                ipv4_address: 10.9.0.5
+        command: bash -c "
+                      ip route del default  &&
+                      ip route add default via 10.9.0.11 &&
+                      /start.sh
+                 "
 
-    <h2>What it does</h2>
-    <p>
-      This demo script clears the terminal and prints a simple test message.
-    </p>
-  </div>
-</body>
-</html>
+    attacker:
+        image: handsonsecurity/seed-ubuntu:large
+        container_name: seed-attacker
+        tty: true
+        cap_add:
+                - ALL
+        privileged: true
+        volumes:
+                - ./volumes:/volumes
+        network_mode: host
+
+    attacker-ns:
+        build: ./image_attacker_ns
+        image: seed-attacker-ns
+        container_name: attacker-ns-10.9.0.153
+        tty: true
+        cap_add:
+                - ALL
+        networks:
+            net-10.9.0.0:
+                ipv4_address: 10.9.0.153
+
+networks:
+    net-10.8.0.0:
+        name: net-10.8.0.0
+        ipam:
+            config:
+                - subnet: 10.8.0.0/24
+
+    net-10.9.0.0:
+        name: net-10.9.0.0
+        ipam:
+            config:
+                - subnet: 10.9.0.0/24
+
+
