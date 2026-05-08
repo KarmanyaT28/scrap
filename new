@@ -1,42 +1,15 @@
-seed@hack-home:~/Downloads/Labsetup$ grep -A 18 "local-server" docker-compose.yml
-    local-server:
-        build: ./image_local_dns_server
-        image: seed-local-dns-server
-        platform: linux/amd64
-        container_name: local-dns-server-10.9.0.53
-        tty: true
-        privileged: true
-        cap_add:
-            - ALL
-        networks:
-            net-10.9.0.0:
-                ipv4_address: 10.9.0.53
-        command: bash -c "ip route del default && ip route add default via 10.9.0.11 && /usr/sbin/named -g -c /etc/bind/named.conf"
+docker run --rm -it \
+  --platform linux/amd64 \
+  --privileged \
+  --network net-10.9.0.0 \
+  --ip 10.9.0.53 \
+  seed-local-dns-server bash
 
-    user:
-        build: ./image_user
-        image: seed-user
-        platform: linux/amd64
-        container_name: user-10.9.0.5
-seed@hack-home:~/Downloads/Labsetup$ grep -A 14 "attacker-ns" docker-compose.yml
-    attacker-ns:
-        build: ./image_attacker_ns
-        image: seed-attacker-ns
-        platform: linux/amd64
-        container_name: attacker-ns-10.9.0.153
-        tty: true
-        privileged: true
-        cap_add:
-            - ALL
-        networks:
-            net-10.9.0.0:
-                ipv4_address: 10.9.0.153
-        command: bash -c "/usr/sbin/named -g -c /etc/bind/named.conf"
 
-networks:
-    net-10.8.0.0:
-        name: net-10.8.0.0
-        ipam:
-            config:
-seed@hack-home:~/Downloads/Labsetup$ docker logs local-dns-server-10.9.0.53
-seed@hack-home:~/Downloads/Labsetup$ 
+
+ip route
+ip route del default
+echo $?
+ip route add default via 10.9.0.11
+echo $?
+/usr/sbin/named -g -c /etc/bind/named.conf
