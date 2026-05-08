@@ -1,3 +1,4 @@
+cat > docker-compose.yml <<'EOF'
 version: "3"
 
 services:
@@ -8,20 +9,15 @@ services:
         tty: true
         privileged: true
         cap_add:
-                - ALL
+            - ALL
         sysctls:
-                - net.ipv4.ip_forward=1
+            - net.ipv4.ip_forward=1
         networks:
             net-10.9.0.0:
                 ipv4_address: 10.9.0.11
             net-10.8.0.0:
                 ipv4_address: 10.8.0.11
-        command: bash -c "
-                      ip route del default  &&
-                      ip route add default via 10.8.0.1 &&
-                      iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE &&
-                      tail -f /dev/null
-                 "
+        command: bash -c "ip route del default && ip route add default via 10.8.0.1 && iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE && tail -f /dev/null"
 
     local-server:
         build: ./image_local_dns_server
@@ -31,15 +27,11 @@ services:
         tty: true
         privileged: true
         cap_add:
-                - ALL
+            - ALL
         networks:
             net-10.9.0.0:
                 ipv4_address: 10.9.0.53
-        command: bash -c "
-                      ip route del default &&
-                      ip route add default via 10.9.0.11 &&
-                      named -g -c /etc/bind/named.conf
-                "
+        command: bash -c "ip route del default && ip route add default via 10.9.0.11 && named -g -c /etc/bind/named.conf"
 
     user:
         build: ./image_user
@@ -48,26 +40,22 @@ services:
         container_name: user-10.9.0.5
         tty: true
         cap_add:
-                - ALL
+            - ALL
         networks:
             net-10.9.0.0:
                 ipv4_address: 10.9.0.5
-        command: bash -c "
-                      ip route del default &&
-                      ip route add default via 10.9.0.11 &&
-                      /start.sh
-                 "
+        command: bash -c "ip route del default && ip route add default via 10.9.0.11 && /start.sh"
 
     attacker:
         image: handsonsecurity/seed-ubuntu:large
         platform: linux/amd64
         container_name: seed-attacker
         tty: true
-        cap_add:
-                - ALL
         privileged: true
+        cap_add:
+            - ALL
         volumes:
-                - ./volumes:/volumes
+            - ./volumes:/volumes
         network_mode: host
 
     attacker-ns:
@@ -78,13 +66,11 @@ services:
         tty: true
         privileged: true
         cap_add:
-                - ALL
+            - ALL
         networks:
             net-10.9.0.0:
                 ipv4_address: 10.9.0.153
-        command: bash -c "
-                      named -g -c /etc/bind/named.conf
-                "
+        command: bash -c "named -g -c /etc/bind/named.conf"
 
 networks:
     net-10.8.0.0:
@@ -98,3 +84,4 @@ networks:
         ipam:
             config:
                 - subnet: 10.9.0.0/24
+EOF
