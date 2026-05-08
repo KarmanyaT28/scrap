@@ -16,7 +16,7 @@ services:
                 ipv4_address: 10.9.0.11
             net-10.8.0.0:
                 ipv4_address: 10.8.0.11
-        command: bash -c "ip route del default && ip route add default via 10.8.0.1 && iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE && tail -f /dev/null"
+        command: bash -c "ip route del default || true && ip route add default via 10.8.0.1 || true && tail -f /dev/null"
 
     local-server:
         build: ./image_local_dns_server
@@ -30,7 +30,7 @@ services:
         networks:
             net-10.9.0.0:
                 ipv4_address: 10.9.0.53
-        command: bash -c "ip route del default && ip route add default via 10.9.0.11 && service named start && tail -f /dev/null"
+        command: bash -c "ip route del default || true && ip route add default via 10.9.0.11 || true && /usr/sbin/named -u bind -c /etc/bind/named.conf && tail -f /dev/null"
 
     user:
         build: ./image_user
@@ -43,7 +43,7 @@ services:
         networks:
             net-10.9.0.0:
                 ipv4_address: 10.9.0.5
-        command: bash -c "ip route del default && ip route add default via 10.9.0.11 && /start.sh"
+        command: bash -c "ip route del default || true && ip route add default via 10.9.0.11 || true && /start.sh"
 
     attacker:
         image: handsonsecurity/seed-ubuntu:large
@@ -69,7 +69,7 @@ services:
         networks:
             net-10.9.0.0:
                 ipv4_address: 10.9.0.153
-        command: bash -c "service named start && tail -f /dev/null"
+        command: bash -c "/usr/sbin/named -u bind -c /etc/bind/named.conf && tail -f /dev/null"
 
 networks:
     net-10.8.0.0:
