@@ -1,37 +1,7 @@
-seed@hack-home:~/Downloads/Labsetup$ grep -A 14 "local-server" docker-compose.yml
-    local-server:
-        build: ./image_local_dns_server
-        image: seed-local-dns-server
-        platform: linux/amd64
-        container_name: local-dns-server-10.9.0.53
-        tty: true
-        privileged: true
-        cap_add:
-            - ALL
-        networks:
-            net-10.9.0.0:
-                ipv4_address: 10.9.0.53
-        command: bash -c "ip route del default || true && ip route add default via 10.9.0.11 || true && /usr/sbin/named -u bind -c /etc/bind/named.conf && tail -f /dev/null"
+docker-compose down --remove-orphans
+docker rm -f local-dns-server-10.9.0.53 attacker-ns-10.9.0.153 2>/dev/null
+docker rmi seed-local-dns-server seed-attacker-ns 2>/dev/null
+docker-compose build --no-cache local-server attacker-ns
+docker-compose up
 
-    user:
-seed@hack-home:~/Downloads/Labsetup$ grep -A 12 "attacker-ns" docker-compose.yml
-    attacker-ns:
-        build: ./image_attacker_ns
-        image: seed-attacker-ns
-        platform: linux/amd64
-        container_name: attacker-ns-10.9.0.153
-        tty: true
-        privileged: true
-        cap_add:
-            - ALL
-        networks:
-            net-10.9.0.0:
-                ipv4_address: 10.9.0.153
-        command: bash -c "/usr/sbin/named -u bind -c /etc/bind/named.conf && tail -f /dev/null"
 
-networks:
-    net-10.8.0.0:
-        name: net-10.8.0.0
-seed@hack-home:~/Downloads/Labsetup$ docker logs local-dns-server-10.9.0.53
-seed@hack-home:~/Downloads/Labsetup$ docker logs attacker-ns-10.9.0.153
-seed@hack-home:~/Downloads/Labsetup$ 
