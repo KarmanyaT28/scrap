@@ -1,11 +1,12 @@
-seed@hack-home:~/Downloads/Labsetup$ cat docker-compose.yml 
 version: "3"
 
 services:
     Router:
         image: handsonsecurity/seed-ubuntu:large
+        platform: linux/amd64
         container_name: seed-router
         tty: true
+        privileged: true
         cap_add:
                 - ALL
         sysctls:
@@ -25,22 +26,25 @@ services:
     local-server:
         build: ./image_local_dns_server
         image: seed-local-dns-server
+        platform: linux/amd64
         container_name: local-dns-server-10.9.0.53
         tty: true
+        privileged: true
         cap_add:
                 - ALL
         networks:
             net-10.9.0.0:
                 ipv4_address: 10.9.0.53
         command: bash -c "
-                      ip route del default  &&
+                      ip route del default &&
                       ip route add default via 10.9.0.11 &&
-                      service named start && tail -f /dev/null
+                      named -g -c /etc/bind/named.conf
                 "
-                  
+
     user:
         build: ./image_user
         image: seed-user
+        platform: linux/amd64
         container_name: user-10.9.0.5
         tty: true
         cap_add:
@@ -49,13 +53,14 @@ services:
             net-10.9.0.0:
                 ipv4_address: 10.9.0.5
         command: bash -c "
-                      ip route del default  &&
+                      ip route del default &&
                       ip route add default via 10.9.0.11 &&
                       /start.sh
                  "
 
     attacker:
         image: handsonsecurity/seed-ubuntu:large
+        platform: linux/amd64
         container_name: seed-attacker
         tty: true
         cap_add:
@@ -68,13 +73,18 @@ services:
     attacker-ns:
         build: ./image_attacker_ns
         image: seed-attacker-ns
+        platform: linux/amd64
         container_name: attacker-ns-10.9.0.153
         tty: true
+        privileged: true
         cap_add:
                 - ALL
         networks:
             net-10.9.0.0:
                 ipv4_address: 10.9.0.153
+        command: bash -c "
+                      named -g -c /etc/bind/named.conf
+                "
 
 networks:
     net-10.8.0.0:
@@ -88,5 +98,3 @@ networks:
         ipam:
             config:
                 - subnet: 10.9.0.0/24
-
-
